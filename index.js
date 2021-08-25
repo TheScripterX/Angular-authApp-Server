@@ -5,6 +5,9 @@ require("dotenv").config();
 // Create Serve
 const app = express();
 
+// Public Directory
+app.use(express.static("public"));
+
 // Cors - Middleware
 app.use(cors());
 
