@@ -1,14 +1,10 @@
 const express = require("express");
 
+//Create Serve
 const app = express();
 
-app.get("/", (req, res) => {
-  res.json({
-    ok: true,
-    msg: "Everything is OK",
-    uid: 1234,
-  });
-});
+//Routes - Middleware
+app.use("/api/auth", require("./routes/auth"));
 
 app.listen(4000, () => {
   console.log(`Server running on ${4000}`);
