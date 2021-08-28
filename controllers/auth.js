@@ -25,7 +25,7 @@ const createUser = async (req = request, res = response) => {
     user.password = bcrypt.hashSync(password, salt);
 
     // Generate JWT - Token
-    const token = await generateJWT(user.id, name);
+    const token = await generateJWT(user.id, name, email);
 
     // Save it to Database
     await user.save();
@@ -35,6 +35,7 @@ const createUser = async (req = request, res = response) => {
       ok: true,
       uid: user.id,
       name,
+      email,
       token,
     });
   } catch (error) {
@@ -71,13 +72,14 @@ const loginUser = async (req = request, res = response) => {
     }
 
     // Generate JWT - TOKEN
-    const token = await generateJWT(user.id, user.name);
+    const token = await generateJWT(user.id, user.name, user.email);
 
     // Response from Server
     return res.json({
       ok: true,
       uid: user.id,
       name: user.name,
+      email: user.email,
       token,
     });
   } catch (error) {
@@ -91,15 +93,19 @@ const loginUser = async (req = request, res = response) => {
 };
 
 const renewToken = async (req = request, res = response) => {
-  const { uid, name } = req;
+  const { uid } = req;
+
+  // Read the DataBase
+  const user = await User.findById(uid);
 
   // Generate JWT - Token
-  const token = await generateJWT(uid, name);
+  const token = await generateJWT(uid, user.name);
 
   return res.json({
     ok: true,
     uid,
-    name,
+    name: user.name,
+    email: user.email,
     token,
   });
 };
